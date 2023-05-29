@@ -2,9 +2,9 @@ import puppeteer from 'puppeteer'
 import mongoose from 'mongoose'
 import ProfileSchema from './models/Profile.js'
 
-const googleScholarLink = 'https://scholar.google.com'
+/*const googleScholarLink = 'https://scholar.google.com'
 const URLlink = 'https://scholar.google.com/citations?hl=ru&view_op=search_authors&mauthors=bstu.by&btnG='
-const dataBaseURL = 'mongodb+srv://admin:eeeeee@clustercitations.isavmzv.mongodb.net/scholarData?retryWrites=true&w=majority'
+const dataBaseURL = 'mongodb+srv://admin:eeeeee@clustercitations.isavmzv.mongodb.net/scholarData?retryWrites=true&w=majority'*/
 //const URLlink = 'https://scholar.google.com/citations?view_op=search_authors&hl=ru&mauthors=bstu.by&before_author=Rdw5_wIAAAAJ&astart=360'
 //const URLlink = 'https://scholar.google.com/citations?view_op=search_authors&hl=ru&mauthors=bstu.by&before_author=HfHN_gIAAAAJ&astart=380'
 
@@ -26,13 +26,13 @@ function convertString(str) {
 }
 
 const parse = async () => {
-    mongoose.connect(dataBaseURL)
+    mongoose.connect(process.env.DB_CONN)
     .catch(error => console.log(`Database connection error\n${error}`))
     //await ProfileSchema.deleteMany({})
 
     const browser = await puppeteer.launch( { headless: true } )
     const page = await browser.newPage()
-    await page.goto(URLlink)
+    await page.goto(process.env.URL_LINK)
 
     //let i = 0
     //for (let index = 0; index < 1; index++) {
@@ -50,7 +50,7 @@ const parse = async () => {
             let fullName = await newPa.$eval('#gsc_prf_pup-img', element => element.getAttribute('alt'))
             fullName = await convertString(fullName)
             let imgURL = await newPa.$eval('#gsc_prf_pup-img', element => element.getAttribute('src'))
-            if (imgURL[0] === '/') imgURL = `${googleScholarLink}${imgURL}`
+            if (imgURL[0] === '/') imgURL = `${process.env.GOOGLE_SCHOLAR_LINK}${imgURL}`
             let res = await newPa.$$eval('td.gsc_rsb_std', arr => arr.map(element => element.innerText))
             res = await res.filter( (element, index) => index % 2  === 0 )
             const cited = (typeof res[0] !== 'undefined') ? res[0] : '0'
@@ -72,7 +72,8 @@ const parse = async () => {
                 i10Index: parseInt(i10Index),
                 citationArray: arrCit,
             }
-            await ProfileSchema.findOneAndUpdate(filter, { $set: update }, { new: true, upsert: true })//.then(err => console.log(err))
+            //await ProfileSchema.findOneAndUpdate(filter, { $set: update }, { new: true, upsert: true })//.then(err => console.log(err))
+            console.log(update)
 
             /*const profile = new ProfileSchema({
                 fullName: fullName,

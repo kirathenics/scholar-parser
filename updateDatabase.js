@@ -1,8 +1,6 @@
 import mongoose from 'mongoose'
 import { ProfileSchema, FacultySchema, DepartmentSchema, TitleSchema } from './models/index.js'
 
-const dataBaseURL = 'mongodb+srv://admin:eeeeee@clustercitations.isavmzv.mongodb.net/scholarData?retryWrites=true&w=majority'
-
 const findAndUpdate = async (CollectionSchema, key) => {
     try {
         const resultInfo = await ProfileSchema.aggregate([
@@ -67,7 +65,7 @@ const findAndUpdate = async (CollectionSchema, key) => {
 }
 
 const updateData = async () => {
-    await mongoose.connect(dataBaseURL)
+    await mongoose.connect(process.env.DB_CONN)
     .catch(error => console.log(`Database connection error\n${error}`))
 
     await findAndUpdate(FacultySchema, '$faculty')
