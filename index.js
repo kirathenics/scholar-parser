@@ -5,8 +5,8 @@ import parse from './parser.js'
 (async () => {
     await dotenv.config()
     let start = (new Date()).getTime()
-    await parse()
-    //await updateData()
+    //await parse()
+    await updateData()
     let end = (new Date()).getTime()
     console.log(end - start)
 })();

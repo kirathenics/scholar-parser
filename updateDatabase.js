@@ -1,8 +1,31 @@
 import mongoose from 'mongoose'
 import { ProfileSchema, FacultySchema, DepartmentSchema, TitleSchema } from './models/index.js'
 
+const computeI10index = async (array) => {
+    array.sort((a, b) => a - b)
+  
+    for (let i = 0; i < array.length; i++) {
+        if (array.length - i <= array[i]) {
+            return array.length - i
+        }
+    }
+  
+    return array.length + 1
+}
+
 const findAndUpdate = async (CollectionSchema, key) => {
     try {
+        // const resultInfo = await ProfileSchema.aggregate([
+        //     {
+        //         $group: {
+        //             _id: key,
+        //             amount: { $sum: 1 },
+        //             total_cited: { $sum: '$cited' },
+        //             total_h_index: { $sum: '$hIndex' },
+        //             total_i10_index: { $sum: '$i10Index' },
+        //         }
+        //     }
+        // ])
         const resultInfo = await ProfileSchema.aggregate([
             {
                 $group: {
@@ -10,10 +33,17 @@ const findAndUpdate = async (CollectionSchema, key) => {
                     amount: { $sum: 1 },
                     total_cited: { $sum: '$cited' },
                     total_h_index: { $sum: '$hIndex' },
-                    total_i10_index: { $sum: '$i10Index' },
+                    total_i10_index: { 
+                        $push: '$hIndex'
+                    },
                 }
             }
         ])
+
+        for (let index = 0; index < resultInfo.length; index++) {
+            resultInfo[index].total_i10_index = await computeI10index(resultInfo[index].total_i10_index)
+            // console.log(resultInfo[index])
+        } 
 
         const resultCitArray = await ProfileSchema.aggregate([
             {
