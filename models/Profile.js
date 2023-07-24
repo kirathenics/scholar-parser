@@ -58,6 +58,10 @@ const ProfileSchema = new mongoose.Schema({
             }
         ],
         default: []
+    },
+    position: {
+        type: String,
+        default: 'Не определен',
     }
 }, { collection: 'profiles' }/*{ timestamps: true }*/)
 

@@ -1,6 +1,34 @@
 import mongoose from 'mongoose'
 import { ProfileSchema, FacultySchema, DepartmentSchema, TitleSchema } from './models/index.js'
 
+const makeTop = async () => {
+    ProfileSchema.find()
+        .sort({cited: -1})
+        .exec((error, profiles) => {
+            if (error) {
+                console.error(error)
+                return
+            }
+
+            let count = 0
+            for (let index = 0; index < profiles.length; index++) {
+                const profile = profiles[index]
+
+                if (profile.profileLink === 'name') continue
+                if (count < 30) {
+                    profile.position = 'top30'
+                } else if (count < 310) {
+                    profile.position = 'top310'
+                } else break
+                count++
+
+                profile.save(error => {
+                    if (error) console.error(error)
+                })
+            }
+    })
+}
+
 const computeI10index = async (array) => {
     array.sort((a, b) => a - b)
   
@@ -98,9 +126,10 @@ const updateData = async () => {
     await mongoose.connect(process.env.DB_CONN)
     .catch(error => console.log(`Database connection error\n${error}`))
 
-    await findAndUpdate(FacultySchema, '$faculty')
-    await findAndUpdate(DepartmentSchema, '$department')
-    await findAndUpdate(TitleSchema, '$title')
+    await makeTop()
+    // await findAndUpdate(FacultySchema, '$faculty')
+    // await findAndUpdate(DepartmentSchema, '$department')
+    // await findAndUpdate(TitleSchema, '$title')
 
     await mongoose.disconnect()
 }
