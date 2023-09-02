@@ -2,12 +2,6 @@ import puppeteer from 'puppeteer'
 import mongoose from 'mongoose'
 import ProfileSchema from './models/Profile.js'
 
-/*const googleScholarLink = 'https://scholar.google.com'
-const URLlink = 'https://scholar.google.com/citations?hl=ru&view_op=search_authors&mauthors=bstu.by&btnG='
-const dataBaseURL = 'mongodb+srv://admin:eeeeee@clustercitations.isavmzv.mongodb.net/scholarData?retryWrites=true&w=majority'*/
-//const URLlink = 'https://scholar.google.com/citations?view_op=search_authors&hl=ru&mauthors=bstu.by&before_author=Rdw5_wIAAAAJ&astart=360'
-//const URLlink = 'https://scholar.google.com/citations?view_op=search_authors&hl=ru&mauthors=bstu.by&before_author=HfHN_gIAAAAJ&astart=380'
-
 function convertString(str) {
     const regex = /[\u0400-\u04FF\.]+/g
     let ArrRegexResult = str.match(regex)
